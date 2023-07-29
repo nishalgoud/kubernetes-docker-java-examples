@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-deploy
+  template:
+    metadata:
+      labels:
+        app: spring-deploy
+    spec:        
+      initContainers:
+      - name: flyway-migration
+        image: flyway/flyway:9.16
+        command: ['flyway', 'migrate']
+        volumeMounts:
+        - name: flyway-config
+          mountPath: "/flyway/conf"
+        - name: flyway-migration
+          mountPath: "/flyway/sql" 
+      containers:
+        - name: spring-deploy
+          image: spring-deploy:1.0
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          envFrom:
+            - configMapRef:
+                name: spring-deploy
+      volumes:
+      - name: flyway-config
+        hostPath:
+          path: /Users/bogdan/pluralsight/deploying-spring-framework-6-applications-playbook/m4/deploying-spring-framework-6/src/main/resources/db
+      - name: flyway-migration
+        hostPath:
+          path: /Users/bogdan/pluralsight/deploying-spring-framework-6-applications-playbook/m4/deploying-spring-framework-6/src/main/resources/db/migration 

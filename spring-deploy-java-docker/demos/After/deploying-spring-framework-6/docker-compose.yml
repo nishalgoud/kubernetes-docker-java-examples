@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  spring-deploy:
+    container_name: spring-deploy
+    depends_on:
+      - mysql
+    image: spring-deploy:1.0
+    ports:
+      - 8080:8080
+    environment:
+      - BOOK_PERSISTENCE_FILE_PATH=${BOOK_PERSISTENCE_FILE_PATH}
+    volumes:
+      - /tmp/spring-deploy:/tmp
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.32
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - 3306:3306

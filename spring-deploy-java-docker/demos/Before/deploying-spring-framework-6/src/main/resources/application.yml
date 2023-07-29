@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/pluralsight
+    username: root
+    password: password
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+flyway:
+  user: root
+  password: password
+  schemas: pluralsight
+  url: jdbc:mysql://mysql:3306/pluralsight
+
+books:
+  persistence:
+    filePath: /tmp/books.txt
